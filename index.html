@@ -288,25 +288,66 @@
         </section>
 
         <!-- Tips Page -->
-        <section class="page-section" id="tips">
-            <div class="card-stat">
-                <h5 class="mb-4"><i class="fas fa-lightbulb me-2"></i>Tips Keuangan dari AI</h5>
-                <div id="aiTips">
-                    <div class="insight-bubble mb-3">
-                        <h6>💡 Tips Hemat</h6>
-                        <p>Catat semua pengeluaran untuk mengetahui pola belanja Anda.</p>
-                    </div>
-                    <div class="insight-bubble mb-3">
-                        <h6>📊 Analisis</h6>
-                        <p>Gunakan fitur statistik untuk melihat kategori pengeluaran terbesar.</p>
-                    </div>
-                    <div class="insight-bubble">
-                        <h6>🎯 Target</h6>
-                        <p>Tetapkan anggaran bulanan dan pantau progresnya secara rutin.</p>
-                    </div>
+<section class="page-section" id="tips">
+    <div class="card-stat">
+        <h5 class="mb-4"><i class="fas fa-lightbulb me-2"></i>Tips Keuangan dari AI</h5>
+
+        <p class="mb-4">
+            🧠 <strong>Tips Keuangan dari AI</strong><br>
+            Fitur ini memberikan saran finansial otomatis yang membantu Anda mengelola uang dengan lebih cerdas. 
+            Setiap tips disusun berdasarkan prinsip pengelolaan keuangan pribadi agar Anda bisa menjaga pemasukan, 
+            mengontrol pengeluaran, dan mencapai tujuan finansial.
+        </p>
+
+        <div id="aiTips">
+
+            <!-- Tips Hemat -->
+            <div class="insight-bubble mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6>💡 Tips Hemat</h6>
+                    <button class="btn btn-outline-primary btn-sm" onclick="toggleTip('hematDesc')">Lihat</button>
                 </div>
+                <p id="hematDesc" style="display: none;">
+                    Catat dan pantau semua pengeluaran Anda. Dengan mengetahui pola belanja, 
+                    Anda bisa menemukan area yang dapat dihemat dan mencegah pengeluaran tidak terduga.
+                </p>
             </div>
-        </section>
+
+            <!-- Analisis -->
+            <div class="insight-bubble mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6>📊 Analisis</h6>
+                    <button class="btn btn-outline-primary btn-sm" onclick="toggleTip('analisisDesc')">Lihat</button>
+                </div>
+                <p id="analisisDesc" style="display: none;">
+                    Manfaatkan fitur statistik untuk melihat kategori pengeluaran terbesar. 
+                    Data ini membantu Anda membuat keputusan finansial yang lebih tepat dan mengoptimalkan anggaran.
+                </p>
+            </div>
+
+            <!-- Target -->
+            <div class="insight-bubble">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6>🎯 Target</h6>
+                    <button class="btn btn-outline-primary btn-sm" onclick="toggleTip('targetDesc')">Lihat</button>
+                </div>
+                <p id="targetDesc" style="display: none;">
+                    Tetapkan target anggaran bulanan dan pantau progresnya secara berkala. 
+                    Fitur ini membantu Anda disiplin dan mencapai tujuan keuangan sesuai rencana.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleTip(id) {
+        const element = document.getElementById(id);
+        element.style.display = element.style.display === "none" ? "block" : "none";
+    }
+</script>
+
     </main>
 
     <button class="btn-add" onclick="openAddModal()">
