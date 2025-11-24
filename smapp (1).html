@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMApp - Smart Money App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3BB273;
+            --primary-light: #4DCCC6;
+            --secondary: #FFFFFF;
+            --bg-light: #F4F4F4;
+            --accent: #1F2937;
+            --accent-soft: #111827;
+            --warning: #FF9F43;
+            --danger: #F56565;
+            --success: #10B981;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 25px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        [data-theme="dark"] {
+            --secondary: #1F2937;
+            --bg-light: #111827;
+            --accent: #F4F4F4;
+            --accent-soft: #E5E7EB;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        * { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-light); color: var(--accent); min-height: 100vh; transition: all 0.3s ease; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--secondary); padding: 20px; box-shadow: var(--shadow); z-index: 1000; transition: transform 0.3s ease; }
+        .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
+        .sidebar-logo i { font-size: 28px; color: var(--primary); }
+        .sidebar-logo span { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: var(--radius-sm); color: var(--accent); text-decoration: none; transition: all 0.3s ease; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; transform: translateX(5px); }
+        .nav-link i { width: 20px; text-align: center; }
+        .main-content { margin-left: 260px; padding: 20px 30px; min-height: 100vh; transition: margin-left 0.3s ease; }
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px 25px; background: var(--secondary); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left h5 { margin: 0; font-weight: 600; }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: var(--bg-light); color: var(--accent); cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .icon-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+        .icon-btn .badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+        .profile-section { display: flex; align-items: center; gap: 12px; }
+        .profile-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .card-stat { background: var(--secondary); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); transition: all 0.3s ease; border: none; }
+        .card-stat:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+        .card-stat.income { border-left: 4px solid var(--success); }
+        .card-stat.expense { border-left: 4px solid var(--danger); }
+        .card-stat.balance { border-left: 4px solid var(--primary); }
+        .card-stat h6 { color: #6B7280; font-size: 14px; margin-bottom: 10px; }
+        .card-stat h3 { font-weight: 700; margin-bottom: 5px; }
+        .card-stat .trend { font-size: 13px; }
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+        .btn-add { background: linear-gradient(135deg, var(--primary), var(--primary-light)); border: none; color: white; padding: 16px 32px; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(59, 178, 115, 0.4); transition: all 0.3s ease; position: fixed; bottom: 30px; right: 30px; z-index: 999; }
+        .btn-add:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(59, 178, 115, 0.5); color: white; }
+        .transaction-card { background: var(--secondary); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow); transition: all 0.3s ease; }
+        .transaction-card:hover { transform: translateX(5px); }
+        .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--bg-light); }
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-left { display: flex; align-items: center; gap: 15px; }
+        .transaction-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .transaction-info h6 { margin: 0; font-weight: 600; }
+        .transaction-info small { color: #6B7280; }
+        .transaction-amount { font-weight: 700; font-size: 16px; }
+        .transaction-amount.expense { color: var(--danger); }
+        .transaction-amount.income { color: var(--success); }
+        .transaction-actions { display: flex; gap: 8px; }
+        .action-btn { width: 35px; height: 35px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .action-btn.edit { background: #FEF3C7; color: var(--warning); }
+        .action-btn.delete { background: #FEE2E2; color: var(--danger); }
+        .action-btn:hover { transform: scale(1.15) rotate(5deg); }
+        .modal-content { border-radius: var(--radius); border: none; }
+        .modal-header { border-bottom: none; padding: 25px 25px 15px; }
+        .modal-body { padding: 15px 25px 25px; }
+        .form-control, .form-select { border-radius: var(--radius-sm); border: 2px solid var(--bg-light); padding: 12px 16px; transition: all 0.3s ease; }
+        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 178, 115, 0.2); }
+        .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+        .category-item { padding: 15px 10px; border-radius: var(--radius-sm); border: 2px solid var(--bg-light); cursor: pointer; text-align: center; transition: all 0.3s ease; }
+        .category-item:hover, .category-item.selected { border-color: var(--primary); background: rgba(59, 178, 115, 0.1); transform: scale(1.05); }
+        .category-item i { font-size: 24px; margin-bottom: 5px; display: block; }
+        .category-item span { font-size: 11px; font-weight: 500; }
+        .chart-container { background: var(--secondary); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .chart-tabs { display: flex; gap: 10px; }
+        .chart-tab { padding: 8px 16px; border-radius: 20px; border: none; background: var(--bg-light); cursor: pointer; font-weight: 500; transition: all 0.3s ease; }
+        .chart-tab.active { background: var(--primary); color: white; }
+        .bar-chart { display: flex; align-items: flex-end; justify-content: space-around; height: 200px; padding: 20px 0; }
+        .bar-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .bar { width: 40px; background: linear-gradient(to top, var(--primary), var(--primary-light)); border-radius: 8px 8px 0 0; transition: all 0.5s ease; cursor: pointer; position: relative; }
+        .bar:hover { opacity: 0.8; }
+        .bar-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 5px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; }
+        .bar:hover .bar-tooltip { opacity: 1; }
+        .bar-label { font-size: 12px; color: #6B7280; }
+        .alert-card { background: linear-gradient(135deg, var(--warning), #FBBF24); color: white; border-radius: var(--radius); padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .alert-card.danger { background: linear-gradient(135deg, var(--danger), #EF4444); }
+        .alert-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .alert-content h6 { margin: 0; font-weight: 600; }
+        .alert-content p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        .privacy-mode .amount-hidden { filter: blur(8px); user-select: none; }
+        .theme-switch { display: flex; align-items: center; gap: 10px; }
+        .switch { position: relative; width: 60px; height: 30px; background: var(--bg-light); border-radius: 15px; cursor: pointer; transition: all 0.3s ease; }
+        .switch.active { background: var(--primary); }
+        .switch::after { content: ''; position: absolute; width: 26px; height: 26px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .switch.active::after { left: 32px; }
+        .insight-bubble { background: linear-gradient(135deg, #E0F2FE, #DBEAFE); border-radius: var(--radius); padding: 15px; margin-top: 15px; border-left: 4px solid #3B82F6; }
+        .insight-bubble h6 { color: #1E40AF; margin-bottom: 5px; font-size: 14px; }
+        .insight-bubble p { color: #1E3A8A; font-size: 13px; margin: 0; }
+        .menu-toggle { display: none; }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .category-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 576px) {
+            .category-grid { grid-template-columns: repeat(2, 1fr); }
+            .bar-chart { height: 150px; }
+            .bar { width: 25px; }
+        }
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-down { animation: slideDown 0.4s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-wallet"></i>
+            <span>SMApp</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#" class="nav-link active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-page="transactions"><i class="fas fa-receipt"></i> Transaksi</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-page="statistics"><i class="fas fa-chart-bar"></i> Statistik</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-page="budgeting"><i class="fas fa-piggy-bank"></i> Budgeting</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-page="tips"><i class="fas fa-lightbulb"></i> Tips AI</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="header-left">
+                <button class="icon-btn menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <div>
+                    <h5 id="currentMonth">November 2024</h5>
+                    <small style="color: #6B7280;">Selamat datang kembali!</small>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" onclick="togglePrivacy()" title="Mode Privasi"><i class="fas fa-eye" id="privacyIcon"></i></button>
+                <button class="icon-btn" id="notifBtn" onclick="showNotifications()"><i class="fas fa-bell"></i><span class="badge" id="notifBadge" style="display:none;">0</span></button>
+                <div class="theme-switch">
+                    <i class="fas fa-sun" style="color: #FBBF24;"></i>
+                    <div class="switch" id="themeSwitch" onclick="toggleTheme()"></div>
+                    <i class="fas fa-moon" style="color: #6366F1;"></i>
+                </div>
+                <div class="profile-section">
+                    <div class="profile-avatar">U</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <section class="page-section active" id="dashboard">
+            <div id="alertContainer"></div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card-stat income fade-in">
+                        <h6><i class="fas fa-arrow-down me-2"></i>Pemasukan</h6>
+                        <h3 class="amount-value" id="totalIncome">Rp 0</h3>
+                        <span class="trend up"><i class="fas fa-arrow-up"></i> Bulan ini</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-stat expense fade-in" style="animation-delay: 0.1s;">
+                        <h6><i class="fas fa-arrow-up me-2"></i>Pengeluaran</h6>
+                        <h3 class="amount-value" id="totalExpense">Rp 0</h3>
+                        <span class="trend down" id="expenseTrend"><i class="fas fa-arrow-down"></i> vs bulan lalu</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-stat balance fade-in" style="animation-delay: 0.2s;">
+                        <h6><i class="fas fa-wallet me-2"></i>Saldo</h6>
+                        <h3 class="amount-value" id="totalBalance">Rp 0</h3>
+                        <span class="trend">Total tersedia</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="chart-container fade-in">
+                        <div class="chart-header">
+                            <h5><i class="fas fa-chart-bar me-2"></i>Grafik Pengeluaran</h5>
+                            <div class="chart-tabs">
+                                <button class="chart-tab active" data-period="daily">Harian</button>
+                                <button class="chart-tab" data-period="weekly">Mingguan</button>
+                                <button class="chart-tab" data-period="monthly">Bulanan</button>
+                            </div>
+                        </div>
+                        <div class="bar-chart" id="barChart"></div>
+                    </div>
+                    <div class="insight-bubble">
+                        <h6><i class="fas fa-robot me-2"></i>Insight AI</h6>
+                        <p id="aiInsight">Tambahkan transaksi untuk mendapatkan insight keuangan dari AI.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="transaction-card">
+                        <h5 class="mb-3"><i class="fas fa-clock me-2"></i>Transaksi Terbaru</h5>
+                        <div id="recentTransactions">
+                            <p class="text-center text-muted py-4">Belum ada transaksi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Page -->
+        <section class="page-section" id="transactions">
+            <div class="transaction-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="fas fa-list me-2"></i>Semua Transaksi</h5>
+                    <input type="text" class="form-control" style="width: 250px;" placeholder="Cari transaksi..." id="searchTransaction">
+                </div>
+                <div id="allTransactions">
+                    <p class="text-center text-muted py-4">Belum ada transaksi</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Page -->
+        <section class="page-section" id="statistics">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i>Pengeluaran per Kategori</h5>
+                        <div id="categoryStats"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5 class="mb-3"><i class="fas fa-exchange-alt me-2"></i>Perbandingan Bulan</h5>
+                        <div id="monthComparison">
+                            <p class="text-muted">Data akan muncul setelah 2 bulan pencatatan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Budgeting Page -->
+        <section class="page-section" id="budgeting">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card-stat">
+                        <h5 class="mb-3"><i class="fas fa-bullseye me-2"></i>Atur Anggaran Bulanan</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Total Anggaran</label>
+                            <input type="number" class="form-control" id="budgetInput" placeholder="Masukkan anggaran...">
+                        </div>
+                        <button class="btn btn-success w-100" onclick="saveBudget()">Simpan Anggaran</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-stat">
+                        <h5 class="mb-3"><i class="fas fa-tachometer-alt me-2"></i>Status Anggaran</h5>
+                        <div id="budgetStatus">
+                            <p class="text-muted">Belum ada anggaran yang diatur</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips Page -->
+        <section class="page-section" id="tips">
+            <div class="card-stat">
+                <h5 class="mb-4"><i class="fas fa-lightbulb me-2"></i>Tips Keuangan dari AI</h5>
+                <div id="aiTips">
+                    <div class="insight-bubble mb-3">
+                        <h6>💡 Tips Hemat</h6>
+                        <p>Catat semua pengeluaran untuk mengetahui pola belanja Anda.</p>
+                    </div>
+                    <div class="insight-bubble mb-3">
+                        <h6>📊 Analisis</h6>
+                        <p>Gunakan fitur statistik untuk melihat kategori pengeluaran terbesar.</p>
+                    </div>
+                    <div class="insight-bubble">
+                        <h6>🎯 Target</h6>
+                        <p>Tetapkan anggaran bulanan dan pantau progresnya secara rutin.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button class="btn-add" onclick="openAddModal()">
+        <i class="fas fa-plus me-2"></i>Tambah Transaksi
+    </button>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Tambah Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="btn-group w-100 mb-3" role="group">
+                        <input type="radio" class="btn-check" name="transType" id="typeExpense" value="expense" checked>
+                        <label class="btn btn-outline-danger" for="typeExpense">Pengeluaran</label>
+                        <input type="radio" class="btn-check" name="transType" id="typeIncome" value="income">
+                        <label class="btn btn-outline-success" for="typeIncome">Pemasukan</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nominal</label>
+                        <input type="number" class="form-control" id="transAmount" placeholder="Masukkan nominal...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kategori</label>
+                        <div class="category-grid" id="categoryGrid"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="transDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catatan (opsional)</label>
+                        <textarea class="form-control" id="transNote" rows="2" placeholder="Tambah catatan..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Scan Struk</label>
+                        <div class="d-flex gap-2">
+                            <input type="file" class="form-control" id="receiptInput" accept="image/*" capture="environment">
+                            <button class="btn btn-outline-primary" onclick="document.getElementById('receiptInput').click()">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Upload foto struk untuk pengisian otomatis</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" id="saveBtn" onclick="saveTransaction()" disabled>Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                    <h5>Yakin menghapus transaksi ini?</h5>
+                    <p class="text-muted">Tindakan ini tidak dapat dibatalkan</p>
+                    <div class="d-flex gap-2 justify-content-center mt-3">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                        <button class="btn btn-danger" onclick="confirmDelete()">Ya, Hapus</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bell me-2"></i>Notifikasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="notifContent">
+                    <p class="text-center text-muted">Tidak ada notifikasi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        const categories = {
+            expense: [
+                {id:'food',name:'Makanan',icon:'fa-utensils',color:'#EF4444'},
+                {id:'transport',name:'Transport',icon:'fa-car',color:'#3B82F6'},
+                {id:'shopping',name:'Belanja',icon:'fa-shopping-bag',color:'#8B5CF6'},
+                {id:'bills',name:'Tagihan',icon:'fa-file-invoice',color:'#F59E0B'},
+                {id:'entertainment',name:'Hiburan',icon:'fa-gamepad',color:'#EC4899'},
+                {id:'health',name:'Kesehatan',icon:'fa-heartbeat',color:'#10B981'},
+                {id:'education',name:'Pendidikan',icon:'fa-graduation-cap',color:'#6366F1'},
+                {id:'other',name:'Lainnya',icon:'fa-ellipsis-h',color:'#6B7280'}
+            ],
+            income: [
+                {id:'salary',name:'Gaji',icon:'fa-briefcase',color:'#10B981'},
+                {id:'bonus',name:'Bonus',icon:'fa-gift',color:'#F59E0B'},
+                {id:'investment',name:'Investasi',icon:'fa-chart-line',color:'#3B82F6'},
+                {id:'freelance',name:'Freelance',icon:'fa-laptop',color:'#8B5CF6'},
+                {id:'other',name:'Lainnya',icon:'fa-ellipsis-h',color:'#6B7280'}
+            ]
+        };
+        const keywordMap = {'grab':'transport','gojek':'transport','uber':'transport','indomaret':'shopping','alfamart':'shopping','shopee':'shopping','tokopedia':'shopping','lazada':'shopping','mcd':'food','kfc':'food','starbucks':'food','gopay':'other','ovo':'other','dana':'other'};
+        
+        let transactions = JSON.parse(localStorage.getItem('smapp_transactions')) || [];
+        let budget = JSON.parse(localStorage.getItem('smapp_budget')) || 0;
+        let notifications = JSON.parse(localStorage.getItem('smapp_notifications')) || [];
+        let deleteId = null;
+        let editId = null;
+        let selectedCategory = null;
+        let isPrivacyMode = false;
+        let isDarkMode = localStorage.getItem('smapp_theme') === 'dark';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            if(isDarkMode) {
+                document.body.setAttribute('data-theme','dark');
+                document.getElementById('themeSwitch').classList.add('active');
+            }
+            document.getElementById('transDate').valueAsDate = new Date();
+            renderCategories('expense');
+            updateDashboard();
+            renderTransactions();
+            checkAlerts();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.dataset.page;
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+                    document.getElementById(page).classList.add('active');
+                    if(window.innerWidth < 992) toggleSidebar();
+                });
+            });
+
+            document.querySelectorAll('input[name="transType"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    renderCategories(e.target.value);
+                    selectedCategory = null;
+                });
+            });
+
+            document.getElementById('transAmount').addEventListener('input', validateForm);
+            
+            document.querySelectorAll('.chart-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderChart(tab.dataset.period);
+                });
+            });
+
+            document.getElementById('searchTransaction').addEventListener('input', (e) => {
+                renderAllTransactions(e.target.value);
+            });
+
+            document.getElementById('transNote').addEventListener('input', (e) => {
+                const note = e.target.value.toLowerCase();
+                for(let kw in keywordMap) {
+                    if(note.includes(kw)) {
+                        selectCategoryById(keywordMap[kw]);
+                        break;
+                    }
+                }
+            });
+
+            document.getElementById('receiptInput').addEventListener('change', handleReceipt);
+        }
+
+        function renderCategories(type) {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = categories[type].map(c => `
+                <div class="category-item" data-id="${c.id}" onclick="selectCategory('${c.id}')">
+                    <i class="fas ${c.icon}" style="color:${c.color}"></i>
+                    <span>${c.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(id) {
+            selectedCategory = id;
+            document.querySelectorAll('.category-item').forEach(c => {
+                c.classList.toggle('selected', c.dataset.id === id);
+            });
+            validateForm();
+        }
+
+        function selectCategoryById(id) {
+            const type = document.querySelector('input[name="transType"]:checked').value;
+            const cat = categories[type].find(c => c.id === id);
+            if(cat) selectCategory(id);
+        }
+
+        function validateForm() {
+            const amount = document.getElementById('transAmount').value;
+            document.getElementById('saveBtn').disabled = !amount || amount <= 0;
+        }
+
+        function openAddModal() {
+            editId = null;
+            document.getElementById('transAmount').value = '';
+            document.getElementById('transNote').value = '';
+            document.getElementById('transDate').valueAsDate = new Date();
+            selectedCategory = null;
+            document.querySelectorAll('.category-item').forEach(c => c.classList.remove('selected'));
+            document.getElementById('typeExpense').checked = true;
+            renderCategories('expense');
+            validateForm();
+            new bootstrap.Modal(document.getElementById('addModal')).show();
+        }
+
+        function saveTransaction() {
+            const type = document.querySelector('input[name="transType"]:checked').value;
+            const amount = parseFloat(document.getElementById('transAmount').value);
+            const date = document.getElementById('transDate').value;
+            const note = document.getElementById('transNote').value;
+            const category = selectedCategory || 'other';
+
+            const trans = {
+                id: editId || Date.now(),
+                type, amount, date, note, category,
+                createdAt: editId ? transactions.find(t=>t.id===editId)?.createdAt : new Date().toISOString()
+            };
+
+            if(editId) {
+                const idx = transactions.findIndex(t => t.id === editId);
+                transactions[idx] = trans;
+            } else {
+                transactions.unshift(trans);
+            }
+
+            localStorage.setItem('smapp_transactions', JSON.stringify(transactions));
+            bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+            
+            updateDashboard();
+            renderTransactions();
+            checkAlerts();
+            generateAIInsight();
+
+            anime({
+                targets: '.transaction-item:first-child',
+                translateY: [-30, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function editTransaction(id) {
+            const trans = transactions.find(t => t.id === id);
+            if(!trans) return;
+            
+            editId = id;
+            document.getElementById(trans.type === 'expense' ? 'typeExpense' : 'typeIncome').checked = true;
+            renderCategories(trans.type);
+            document.getElementById('transAmount').value = trans.amount;
+            document.getElementById('transDate').value = trans.date;
+            document.getElementById('transNote').value = trans.note || '';
+            selectCategory(trans.category);
+            validateForm();
+            new bootstrap.Modal(document.getElementById('addModal')).show();
+        }
+
+        function deleteTransaction(id) {
+            deleteId = id;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        function confirmDelete() {
+            transactions = transactions.filter(t => t.id !== deleteId);
+            localStorage.setItem('smapp_transactions', JSON.stringify(transactions));
+            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            updateDashboard();
+            renderTransactions();
+            checkAlerts();
+        }
+
+        function showDetail(id) {
+            const trans = transactions.find(t => t.id === id);
+            if(!trans) return;
+            const type = trans.type === 'expense' ? 'Pengeluaran' : 'Pemasukan';
+            const cat = [...categories.expense, ...categories.income].find(c => c.id === trans.category);
+            document.getElementById('detailContent').innerHTML = `
+                <div class="text-center mb-3">
+                    <div class="transaction-icon mx-auto mb-2" style="background:${cat?.color}20;width:60px;height:60px;">
+                        <i class="fas ${cat?.icon}" style="color:${cat?.color};font-size:24px;line-height:60px;"></i>
+                    </div>
+                    <h4 class="${trans.type === 'expense' ? 'text-danger' : 'text-success'}">${formatCurrency(trans.amount)}</h4>
+                </div>
+                <p><strong>Tipe:</strong> ${type}</p>
+                <p><strong>Kategori:</strong> ${cat?.name || 'Lainnya'}</p>
+                <p><strong>Tanggal:</strong> ${formatDate(trans.date)}</p>
+                ${trans.note ? `<p><strong>Catatan:</strong> ${trans.note}</p>` : ''}
+            `;
+            new bootstrap.Modal(document.getElementById('detailModal')).show();
+        }
+
+        function updateDashboard() {
+            const income = transactions.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+            const expense = transactions.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+            const balance = income - expense;
+
+            document.getElementById('totalIncome').textContent = formatCurrency(income);
+            document.getElementById('totalExpense').textContent = formatCurrency(expense);
+            document.getElementById('totalBalance').textContent = formatCurrency(balance);
+
+            const now = new Date();
+            document.getElementById('currentMonth').textContent = now.toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+
+            renderChart('daily');
+            updateBudgetStatus();
+            renderCategoryStats();
+        }
+
+        function renderTransactions() {
+            const recent = transactions.slice(0, 5);
+            const container = document.getElementById('recentTransactions');
+            
+            if(recent.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted py-4">Belum ada transaksi</p>';
+                return;
+            }
+
+            container.innerHTML = recent.map(t => createTransactionItem(t)).join('');
+            renderAllTransactions();
+        }
+
+        function renderAllTransactions(search = '') {
+            const filtered = search ? transactions.filter(t => 
+                t.note?.toLowerCase().includes(search.toLowerCase()) ||
+                categories[t.type].find(c=>c.id===t.category)?.name.toLowerCase().includes(search.toLowerCase())
+            ) : transactions;
+
+            const container = document.getElementById('allTransactions');
+            if(filtered.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted py-4">Tidak ada transaksi</p>';
+                return;
+            }
+            container.innerHTML = filtered.map(t => createTransactionItem(t, true)).join('');
+        }
+
+        function createTransactionItem(t, showActions = false) {
+            const cat = [...categories.expense, ...categories.income].find(c => c.id === t.category);
+            return `
+                <div class="transaction-item" onclick="showDetail(${t.id})">
+                    <div class="transaction-left">
+                        <div class="transaction-icon" style="background:${cat?.color}20">
+                            <i class="fas ${cat?.icon}" style="color:${cat?.color}"></i>
+                        </div>
+                        <div class="transaction-info">
+                            <h6>${cat?.name || 'Lainnya'}</h6>
+                            <small>${formatDate(t.date)}${t.note ? ' • ' + t.note.substring(0,20) : ''}</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="transaction-amount amount-value ${t.type}">${t.type==='expense'?'-':'+'} ${formatCurrency(t.amount)}</span>
+                        ${showActions ? `
+                            <div class="transaction-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn edit" onclick="editTransaction(${t.id})"><i class="fas fa-pen"></i></button>
+                                <button class="action-btn delete" onclick="deleteTransaction(${t.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChart(period) {
+            const chart = document.getElementById('barChart');
+            const now = new Date();
+            let data = [];
+
+            if(period === 'daily') {
+                for(let i = 6; i >= 0; i--) {
+                    const d = new Date(now);
+                    d.setDate(d.getDate() - i);
+                    const dateStr = d.toISOString().split('T')[0];
+                    const total = transactions.filter(t => t.type === 'expense' && t.date === dateStr).reduce((a,b) => a + b.amount, 0);
+                    data.push({label: d.toLocaleDateString('id-ID',{weekday:'short'}), value: total});
+                }
+            } else if(period === 'weekly') {
+                for(let i = 3; i >= 0; i--) {
+                    const start = new Date(now);
+                    start.setDate(start.getDate() - (i+1)*7);
+                    const end = new Date(now);
+                    end.setDate(end.getDate() - i*7);
+                    const total = transactions.filter(t => {
+                        const td = new Date(t.date);
+                        return t.type === 'expense' && td >= start && td < end;
+                    }).reduce((a,b) => a + b.amount, 0);
+                    data.push({label: `Minggu ${4-i}`, value: total});
+                }
+            } else {
+                for(let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const total = transactions.filter(t => {
+                        const td = new Date(t.date);
+                        return t.type === 'expense' && td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear();
+                    }).reduce((a,b) => a + b.amount, 0);
+                    data.push({label: d.toLocaleDateString('id-ID',{month:'short'}), value: total});
+                }
+            }
+
+            const max = Math.max(...data.map(d => d.value), 1);
+            chart.innerHTML = data.map(d => `
+                <div class="bar-item">
+                    <div class="bar" style="height:${(d.value/max)*150}px">
+                        <div class="bar-tooltip">${formatCurrency(d.value)}</div>
+                    </div>
+                    <span class="bar-label">${d.label}</span>
+                </div>
+            `).join('');
+
+            anime({
+                targets: '.bar',
+                height: (el) => el.style.height,
+                duration: 800,
+                delay: anime.stagger(100),
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function renderCategoryStats() {
+            const stats = {};
+            transactions.filter(t => t.type === 'expense').forEach(t => {
+                stats[t.category] = (stats[t.category] || 0) + t.amount;
+            });
+
+            const total = Object.values(stats).reduce((a,b) => a + b, 0) || 1;
+            const container = document.getElementById('categoryStats');
+            
+            if(Object.keys(stats).length === 0) {
+                container.innerHTML = '<p class="text-muted">Belum ada data pengeluaran</p>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(stats).sort((a,b) => b[1] - a[1]).map(([catId, amount]) => {
+                const cat = categories.expense.find(c => c.id === catId);
+                const pct = ((amount/total)*100).toFixed(1);
+                return `
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="transaction-icon me-3" style="background:${cat?.color}20;width:40px;height:40px;">
+                            <i class="fas ${cat?.icon}" style="color:${cat?.color};line-height:40px;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>${cat?.name || 'Lainnya'}</span>
+                                <span class="amount-value">${formatCurrency(amount)}</span>
+                            </div>
+                            <div class="progress" style="height:6px;">
+                                <div class="progress-bar" style="width:${pct}%;background:${cat?.color}"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function checkAlerts() {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = '';
+            notifications = [];
+
+            const now = new Date();
+            const thisWeek = transactions.filter(t => {
+                const td = new Date(t.date);
+                const diff = (now - td) / (1000*60*60*24);
+                return t.type === 'expense' && diff <= 7;
+            }).reduce((a,b) => a + b.amount, 0);
+
+            const lastWeek = transactions.filter(t => {
+                const td = new Date(t.date);
+                const diff = (now - td) / (1000*60*60*24);
+                return t.type === 'expense' && diff > 7 && diff <= 14;
+            }).reduce((a,b) => a + b.amount, 0);
+
+            if(thisWeek > lastWeek * 1.2 && lastWeek > 0) {
+                const pct = ((thisWeek - lastWeek) / lastWeek * 100).toFixed(0);
+                container.innerHTML += `
+                    <div class="alert-card danger slide-down">
+                        <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="alert-content">
+                            <h6>⚠️ Overspending Alert!</h6>
+                            <p>Pengeluaran minggu ini ${pct}% lebih tinggi dari minggu lalu</p>
+                        </div>
+                        <button class="btn btn-sm btn-light ms-auto" onclick="this.parentElement.remove()">Tutup</button>
+                    </div>
+                `;
+                notifications.push({msg: `Pengeluaran naik ${pct}%`, time: new Date().toISOString()});
+            }
+
+            if(budget > 0) {
+                const thisMonth = transactions.filter(t => {
+                    const td = new Date(t.date);
+                    return t.type === 'expense' && td.getMonth() === now.getMonth() && td.getFullYear() === now.getFullYear();
+                }).reduce((a,b) => a + b.amount, 0);
+
+                if(thisMonth > budget) {
+                    container.innerHTML += `
+                        <div class="alert-card danger slide-down">
+                            <div class="alert-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="alert-content">
+                                <h6>💸 Budget Terlampaui!</h6>
+                                <p>Anda telah melewati batas anggaran bulan ini sebesar ${formatCurrency(thisMonth - budget)}</p>
+                            </div>
+                            <button class="btn btn-sm btn-light ms-auto" onclick="this.parentElement.remove()">Tutup</button>
+                        </div>
+                    `;
+                    notifications.push({msg: 'Budget bulanan terlampaui!', time: new Date().toISOString()});
+                }
+            }
+
+            const badge = document.getElementById('notifBadge');
+            if(notifications.length > 0) {
+                badge.style.display = 'flex';
+                badge.textContent = notifications.length;
+            } else {
+                badge.style.display = 'none';
+            }
+            localStorage.setItem('smapp_notifications', JSON.stringify(notifications));
+        }
+
+        function showNotifications() {
+            const container = document.getElementById('notifContent');
+            if(notifications.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted">Tidak ada notifikasi</p>';
+            } else {
+                container.innerHTML = notifications.map(n => `
+                    <div class="alert-card mb-2" style="padding:12px;">
+                        <i class="fas fa-bell me-2"></i>
+                        <span>${n.msg}</span>
+                    </div>
+                `).join('');
+            }
+            new bootstrap.Modal(document.getElementById('notifModal')).show();
+        }
+
+        function saveBudget() {
+            budget = parseFloat(document.getElementById('budgetInput').value) || 0;
+            localStorage.setItem('smapp_budget', JSON.stringify(budget));
+            updateBudgetStatus();
+            checkAlerts();
+        }
+
+        function updateBudgetStatus() {
+            const container = document.getElementById('budgetStatus');
+            if(budget <= 0) {
+                container.innerHTML = '<p class="text-muted">Belum ada anggaran yang diatur</p>';
+                return;
+            }
+
+            const now = new Date();
+            const thisMonth = transactions.filter(t => {
+                const td = new Date(t.date);
+                return t.type === 'expense' && td.getMonth() === now.getMonth() && td.getFullYear() === now.getFullYear();
+            }).reduce((a,b) => a + b.amount, 0);
+
+            const pct = Math.min((thisMonth / budget) * 100, 100);
+            const remaining = budget - thisMonth;
+            const color = pct > 100 ? 'var(--danger)' : pct > 80 ? 'var(--warning)' : 'var(--success)';
+
+            container.innerHTML = `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Terpakai</span>
+                        <span class="amount-value">${formatCurrency(thisMonth)} / ${formatCurrency(budget)}</span>
+                    </div>
+                    <div class="progress" style="height:12px;border-radius:6px;">
+                        <div class="progress-bar" style="width:${pct}%;background:${color};border-radius:6px;"></div>
+                    </div>
+                </div>
+                <p class="${remaining >= 0 ? 'text-success' : 'text-danger'}">
+                    <i class="fas ${remaining >= 0 ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${remaining >= 0 ? 'Sisa anggaran: ' + formatCurrency(remaining) : 'Melebihi anggaran: ' + formatCurrency(Math.abs(remaining))}
+                </p>
+            `;
+            document.getElementById('budgetInput').value = budget;
+        }
+
+        function generateAIInsight() {
+            const insights = [
+                "Pengeluaran makanan Anda cukup tinggi. Coba masak di rumah untuk hemat!",
+                "Bagus! Pengeluaran Anda stabil minggu ini.",
+                "Tips: Sisihkan 20% pendapatan untuk tabungan darurat.",
+                "Perhatikan pengeluaran hiburan Anda bulan ini.",
+                "Great job! Anda sudah mencatat transaksi dengan rutin.",
+                "Coba review langganan bulanan yang tidak terpakai."
+            ];
+
+            const expense = transactions.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+            const income = transactions.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+
+            let insight = insights[Math.floor(Math.random() * insights.length)];
+            
+            if(expense > income * 0.8 && income > 0) {
+                insight = "⚠️ Pengeluaran Anda sudah mencapai 80% dari pemasukan. Pertimbangkan untuk mengurangi pengeluaran tidak penting.";
+            }
+
+            document.getElementById('aiInsight').textContent = insight;
+        }
+
+        function handleReceipt(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const mockData = {amount: Math.floor(Math.random() * 100000) + 10000, category: 'shopping'};
+            
+            document.getElementById('transAmount').value = mockData.amount;
+            selectCategory(mockData.category);
+            validateForm();
+
+            alert('📷 Struk berhasil di-scan!\nBeberapa data mungkin perlu dilengkapi manual.');
+        }
+
+        function togglePrivacy() {
+            isPrivacyMode = !isPrivacyMode;
+            document.body.classList.toggle('privacy-mode', isPrivacyMode);
+            document.querySelectorAll('.amount-value').forEach(el => {
+                el.classList.toggle('amount-hidden', isPrivacyMode);
+            });
+            const icon = document.getElementById('privacyIcon');
+            icon.className = isPrivacyMode ? 'fas fa-eye-slash' : 'fas fa-eye';
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.setAttribute('data-theme', isDarkMode ? 'dark' : '');
+            document.getElementById('themeSwitch').classList.toggle('active', isDarkMode);
+            localStorage.setItem('smapp_theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function formatCurrency(num) {
+            return 'Rp ' + num.toLocaleString('id-ID');
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+        }
+    </script>
+</body>
+</html>
