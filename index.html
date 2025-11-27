@@ -2,11 +2,13 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="SMApp" content="width=device-width, initial-scale=1.0">
     <title>SMApp - Smart Money App</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="foto/logo.png" />
+    <link rel="icon" type="image/x-icon" href="/ikon/tanpa ltar blkng.png" />
     <style>
         :root {
             --primary: #3BB273;
@@ -202,15 +204,27 @@
             </div>
 
             <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="chart-container fade-in">
-                        <div class="chart-header">
-                            <h5><i class="fas fa-chart-bar me-2"></i>Grafik Pengeluaran</h5>
-                            <div class="chart-tabs">
-                                <button class="chart-tab active" data-period="daily">Harian</button>
-                                <button class="chart-tab" data-period="weekly">Mingguan</button>
-                                <button class="chart-tab" data-period="monthly">Bulanan</button>
-                            </div>
+    <div class="col-lg-8">
+        <div class="chart-container fade-in">
+
+            <!-- Gambar Tambahan -->
+            <div class="chart-image-wrapper mb-3">
+                <img src="foto/fnc.png" alt="Chart Image" class="chart-image">
+            </div>
+
+            <div class="chart-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Grafik Pengeluaran</h5>
+                <div class="chart-tabs">
+                    <button class="chart-tab active" data-period="daily">Harian</button>
+                    <button class="chart-tab" data-period="weekly">Mingguan</button>
+                    <button class="chart-tab" data-period="monthly">Bulanan</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
                         </div>
                         <div class="bar-chart" id="barChart"></div>
                     </div>
@@ -307,11 +321,26 @@
                     <h6>💡 Tips Hemat</h6>
                     <button class="btn btn-outline-primary btn-sm" onclick="toggleTip('hematDesc')">Lihat</button>
                 </div>
-                <p id="hematDesc" style="display: none;">
-                    Catat dan pantau semua pengeluaran Anda. Dengan mengetahui pola belanja, 
-                    Anda bisa menemukan area yang dapat dihemat dan mencegah pengeluaran tidak terduga.
-                </p>
+                
+                <div id="hematDesc" style="display: none;">
+                    <p>
+                        Catat dan pantau semua pengeluaran Anda. Dengan mengetahui pola belanja, 
+                        Anda bisa menemukan area yang dapat dihemat dan mencegah pengeluaran tidak terduga.
+                    </p>
+
+                    <!-- Tambahan link YouTube -->
+                    <a href="https://youtu.be/sCUghGYNGC4?si=EHHh8ypHljLS6vZS" 
+                       target="_blank" 
+                       class="btn btn-sm btn-danger mt-2">
+                        🎥 Tonton Video Tips Hemat
+                    </a>
+                </div>
             </div>
+
+        </div>
+    </div>
+</section>
+
 
             <!-- Analisis -->
             <div class="insight-bubble mb-3">
